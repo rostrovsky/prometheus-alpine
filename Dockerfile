@@ -25,5 +25,5 @@ RUN set -x \
         fi; \
     done
 
-FROM ${ARCH}alpine as base
+FROM ${ARCH}alpine
 COPY --from=builder /rootfs /rootfs
