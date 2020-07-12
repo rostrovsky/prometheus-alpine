@@ -1,5 +1,4 @@
-FROM alpine as base
-COPY --from=builder /rootfs /rootfs
+FROM TODO
 
 ARG ARCH="amd64"
 ARG OS="linux"

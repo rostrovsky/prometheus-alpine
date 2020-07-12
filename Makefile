@@ -11,31 +11,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-REPOSITORY ?= hub.docker.com
+REPOSITORY ?= dummy-repo/prometheus
 NAME       := alpine
 BRANCH     := $(shell git rev-parse --abbrev-ref HEAD)
 SUFFIX     ?= -$(subst /,-,$(BRANCH))
-VERSIONS   ?= uclibc glibc
 
 .PHONY: all
 all: build
 
 .PHONY: build
 build:
-	@./build.sh "$(REPOSITORY)/amd64/$(NAME)" "amd64" "$(SUFFIX)" $(VERSIONS)
-	@./build.sh "$(REPOSITORY)/arm32v7/$(NAME)" "arm32v7/" "$(SUFFIX)" $(VERSIONS)
-	@./build.sh "$(REPOSITORY)/$(NAME)-linux-arm64" "arm64v8/" "$(SUFFIX)" $(VERSIONS)
-	# uclibc doens't support ppc64le, s390x
-	@./build.sh "$(REPOSITORY)/$(NAME)-linux-ppc64le" "ppc64le/" "$(SUFFIX)" glibc
-	@./build.sh "$(REPOSITORY)/$(NAME)-linux-s390x" "s390x/" "$(SUFFIX)" glibc
+	@./build.sh "$(REPOSITORY)/$(NAME)-linux-amd64" "amd64/" "$(SUFFIX)"
+	@./build.sh "$(REPOSITORY)/$(NAME)-linux-armv7" "arm32v7/" "$(SUFFIX)"
+	@./build.sh "$(REPOSITORY)/$(NAME)-linux-arm64" "arm64v8/" "$(SUFFIX)"
+	@./build.sh "$(REPOSITORY)/$(NAME)-linux-ppc64le" "ppc64le/" "$(SUFFIX)"
+	@./build.sh "$(REPOSITORY)/$(NAME)-linux-s390x" "s390x/" "$(SUFFIX)"
 
 .PHONY: tag
 tag:
-	docker tag "$(REPOSITORY)/$(NAME)-linux-amd64:uclibc" "$(REPOSITORY)/$(NAME)-linux-amd64:latest"
-	docker tag "$(REPOSITORY)/$(NAME)-linux-armv7:uclibc" "$(REPOSITORY)/$(NAME)-linux-armv7:latest"
-	docker tag "$(REPOSITORY)/$(NAME)-linux-arm64:uclibc" "$(REPOSITORY)/$(NAME)-linux-arm64:latest"
-	docker tag "$(REPOSITORY)/$(NAME)-linux-ppc64le:glibc" "$(REPOSITORY)/$(NAME)-linux-ppc64le:latest"
-	docker tag "$(REPOSITORY)/$(NAME)-linux-s390x:glibc" "$(REPOSITORY)/$(NAME)-linux-s390x:latest"
+	docker tag "$(REPOSITORY)/$(NAME)-linux-amd64" "$(REPOSITORY)/$(NAME)-linux-amd64:latest"
+	docker tag "$(REPOSITORY)/$(NAME)-linux-armv7" "$(REPOSITORY)/$(NAME)-linux-armv7:latest"
+	docker tag "$(REPOSITORY)/$(NAME)-linux-arm64" "$(REPOSITORY)/$(NAME)-linux-arm64:latest"
+	docker tag "$(REPOSITORY)/$(NAME)-linux-ppc64le" "$(REPOSITORY)/$(NAME)-linux-ppc64le:latest"
+	docker tag "$(REPOSITORY)/$(NAME)-linux-s390x" "$(REPOSITORY)/$(NAME)-linux-s390x:latest"
 
 .PHONY: manifest
 manifest:
@@ -50,9 +48,8 @@ manifest:
 
 .PHONY: push
 push:
-	@./push.sh "$(REPOSITORY)/$(NAME)-linux-amd64" "" "$(SUFFIX)" $(VERSIONS)
-	@./push.sh "$(REPOSITORY)/$(NAME)-linux-armv7" "arm32v7/" "$(SUFFIX)" $(VERSIONS)
-	@./push.sh "$(REPOSITORY)/$(NAME)-linux-arm64" "arm64v8/" "$(SUFFIX)" $(VERSIONS)
-	# uclibc doens't support ppc64le, s390x
-	@./push.sh "$(REPOSITORY)/$(NAME)-linux-ppc64le" "ppc64le/" "$(SUFFIX)" glibc
-	@./push.sh "$(REPOSITORY)/$(NAME)-linux-s390x" "s390x/" "$(SUFFIX)" glibc
+	@./push.sh "$(REPOSITORY)/$(NAME)-linux-amd64" "amd64/" "$(SUFFIX)"
+	@./push.sh "$(REPOSITORY)/$(NAME)-linux-armv7" "arm32v7/" "$(SUFFIX)"
+	@./push.sh "$(REPOSITORY)/$(NAME)-linux-arm64" "arm64v8/" "$(SUFFIX)"
+	@./push.sh "$(REPOSITORY)/$(NAME)-linux-ppc64le" "ppc64le/" "$(SUFFIX)"
+	@./push.sh "$(REPOSITORY)/$(NAME)-linux-s390x" "s390x/" "$(SUFFIX)"

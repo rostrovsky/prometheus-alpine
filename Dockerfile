@@ -1,4 +1,5 @@
-FROM alpine as builder
+ARG ARCH=""
+FROM ${ARCH}alpine as builder
 
 RUN apk add --update ca-certificates gcc build-base tzdata libc6-compat
 RUN [ ! -e /etc/nsswitch.conf ] && echo 'hosts: files dns' > /etc/nsswitch.conf
@@ -23,3 +24,6 @@ RUN set -x \
             && cp -av "$f" "rootfs/${f#/}"; \
         fi; \
     done
+
+FROM ${ARCH}alpine as base
+COPY --from=builder /rootfs /rootfs
